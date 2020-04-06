@@ -96,6 +96,6 @@ def get_csse_info(countries=[".*"], dates=[".*"]):
     db = client["covid-19"]
     db.list_collection_names()
     collection = db["csse"]
-    out = dict({i: item for i, item in enumerate(collection.find({"_id": regex})})
-    #out = DataFrame(out)
+    response = collection.find({"_id": regex})
+    out = dict({_["_id"]: {k: item for k, item in _.items() if k != "_id"} for _ in response})
     return out
