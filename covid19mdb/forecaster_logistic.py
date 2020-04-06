@@ -12,8 +12,8 @@ def forecast_logistic_country(country, today, n_forecast):
     dtf_data = DataFrame(
         collection.find({"COUNTRY": "italy", "DATE": {"$lte": today}})
     )
-    min_T = min(dtf_data["T"])
-    max_T = max(dtf_data["T"])
+    min_T = int(min(dtf_data["T"]))
+    max_T = int(max(dtf_data["T"]))
     if min_T == max_T:
         return {
             "past_fit": [min_T] * dtf_data.shape[0], 
