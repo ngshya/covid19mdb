@@ -84,8 +84,8 @@ def update_csse_mdb():
 
 def get_csse_info(countries=[".*"], dates=[".*"]):
     countries = [s.lower() for s in countries]
+    dates = [s.lower() for s in dates]
     regex= re.compile("^("+"|".join(countries)+")_("+"|".join(dates)+")")
     collection = get_collection(db="covid-19", collection="csse")
-    response = collection.find({"_id": regex})
-    out = dict({_["_id"]: {k: item for k, item in _.items() if k != "_id"} for _ in response})
-    return out
+    response = list(collection.find({"_id": regex}))
+    return response

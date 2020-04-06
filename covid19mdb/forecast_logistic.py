@@ -1,5 +1,6 @@
 from pandas import DataFrame
 from numpy import min, max
+import re
 from .mongo import get_collection
 from .logistic import ModelLogistic
 
@@ -56,3 +57,12 @@ def update_forecast_logistic_mdb():
             dict_forecast["COUNTRY"] = country
             dict_forecast["DATE"] = today
             collection_forecast_logistic.insert_one(dict_forecast)
+
+
+def get_forecast_logistic_info(countries=[".*"], dates=[".*"]):
+    countries = [s.lower() for s in countries]
+    dates = [s.lower() for s in dates]
+    regex= re.compile("^("+"|".join(countries)+")_("+"|".join(dates)+")")
+    collection = get_collection(db="covid-19", collection="forecast_logistic")
+    response = list(collection.find({"_id": regex}))
+    return response
