@@ -1,5 +1,6 @@
 import os
-from pandas import read_csv, to_datetime, merge, concat
+import re
+from pandas import read_csv, to_datetime, merge, concat, DataFrame
 from pymongo import MongoClient, ReplaceOne
 
 
@@ -42,6 +43,7 @@ def csse_data(url, type_n, dates=None):
 
 
 def update_csse_mdb():
+    # TODO: values as input parameters
     dtf_data_tot = csse_data(
         url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/"\
             + "csse_covid_19_data/csse_covid_19_time_series/"\
@@ -82,3 +84,18 @@ def update_csse_mdb():
             ReplaceOne( {'_id': dict_tmp['_id']},  dict_tmp, upsert=True)
         )
     collection.bulk_write(update_objects)
+
+
+def get_csse_info(countries=[".*"], dates=[".*"]):
+    countries = [s.lower() for s in countries]
+    regex= re.compile("^("+"|".join(countries)+")_("+"|".join(dates)+")")
+    mdb_user = os.environ["mdb_user"]
+    mdb_password = os.environ["mdb_pwd"]
+    client = MongoClient('mongodb://'+mdb_user+':'+mdb_password\
+        +'@ds263018.mlab.com:63018/covid-19', retryWrites=False)
+    db = client["covid-19"]
+    db.list_collection_names()
+    collection = db["csse"]
+    out = collection.find({"_id": regex})
+    #out = DataFrame(out)
+    return out
