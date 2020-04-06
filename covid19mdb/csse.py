@@ -30,15 +30,16 @@ def csse_data(url, type_n, dates=None):
         .agg("sum")\
         .reset_index(drop=False)\
         .melt('COUNTRY', var_name='DATE', value_name=type_n)
-    dtf_data["DATE"] = to_datetime(dtf_data["DATE"])
+    dtf_data["DATE"] = to_datetime(dtf_data["DATE"]).dt.strftime("%Y%m%d")
+    dtf_data["COUNTRY"] = dtf_data["COUNTRY"].str.lower()
     dtf_world = dtf_data.groupby(["DATE"])\
         .agg({type_n: "sum"})\
         .reset_index(drop=False)
     dtf_world["COUNTRY"] = "World"
     dtf_data = concat((dtf_data, dtf_world))
-    dtf_data["_id"] = dtf_data["COUNTRY"].str.lower() \
-        + "_" + dtf_data["DATE"].dt.strftime("%Y%m%d")
-    dtf_data= dtf_data.loc[:, ["_id", type_n]]
+    dtf_data["_id"] = dtf_data["COUNTRY"] \
+        + "_" + dtf_data["DATE"]
+    dtf_data= dtf_data.loc[:, ["_id", "COUNTRY", "DATE", type_n]]
     return dtf_data
 
 
