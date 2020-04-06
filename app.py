@@ -1,5 +1,7 @@
-from covid19mdb.flask import create_app
+from flask import Flask
 
+app = Flask(__name__)
 
-app = create_app()
-app.run()
+@app.route('/')
+def hello():
+    return 'Hello World!'
