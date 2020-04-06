@@ -63,8 +63,8 @@ def update_csse_mdb():
             + "time_series_covid19_deaths_global.csv", 
         type_n="D"
     )
-    dtf_data = merge(dtf_data_tot, dtf_data_rec, on="_id", how="outer")
-    dtf_data = merge(dtf_data, dtf_data_dea, on="_id", how="outer")
+    dtf_data = merge(dtf_data_tot, dtf_data_rec, on=["_id", "COUNTRY", "DATE"], how="outer")
+    dtf_data = merge(dtf_data, dtf_data_dea, on=["_id", "COUNTRY", "DATE"], how="outer")
     dtf_data = dtf_data.fillna(0)
 
     mdb_user = os.environ["mdb_user"]
