@@ -1,7 +1,8 @@
 import os
 import re
 from pandas import read_csv, to_datetime, merge, concat, DataFrame
-from pymongo import MongoClient, ReplaceOne
+from pymongo import ReplaceOne
+from .mongo import get_collection
 
 
 def get_csse_data(url, dates=None):
@@ -67,14 +68,7 @@ def update_csse_mdb():
     dtf_data = merge(dtf_data, dtf_data_dea, on=["_id", "COUNTRY", "DATE"], how="outer")
     dtf_data = dtf_data.fillna(0)
 
-    mdb_user = os.environ["mdb_user"]
-    mdb_password = os.environ["mdb_pwd"]
-
-    client = MongoClient('mongodb://'+mdb_user+':'+mdb_password\
-        +'@ds263018.mlab.com:63018/covid-19', retryWrites=False)
-    db = client["covid-19"]
-    #db.list_collection_names()
-    collection = db["csse"]
+    collection = get_collection(db="covid-19", collection="csse")
     update_objects = list()
     for j in range(dtf_data.shape[0]):
         dict_tmp = dtf_data.iloc[j, ].to_dict()
@@ -91,13 +85,7 @@ def update_csse_mdb():
 def get_csse_info(countries=[".*"], dates=[".*"]):
     countries = [s.lower() for s in countries]
     regex= re.compile("^("+"|".join(countries)+")_("+"|".join(dates)+")")
-    mdb_user = os.environ["mdb_user"]
-    mdb_password = os.environ["mdb_pwd"]
-    client = MongoClient('mongodb://'+mdb_user+':'+mdb_password\
-        +'@ds263018.mlab.com:63018/covid-19', retryWrites=False)
-    db = client["covid-19"]
-    db.list_collection_names()
-    collection = db["csse"]
+    collection = get_collection(db="covid-19", collection="csse")
     response = collection.find({"_id": regex})
     out = dict({_["_id"]: {k: item for k, item in _.items() if k != "_id"} for _ in response})
     return out
