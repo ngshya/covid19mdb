@@ -39,7 +39,6 @@ def csse_data(url, type_n, dates=None):
     dtf_data = concat((dtf_data, dtf_world))
     dtf_data["_id"] = dtf_data["COUNTRY"] \
         + "_" + dtf_data["DATE"]
-    dtf_data["DATE"] = dtf_data["DATE"].astype(int)
     dtf_data= dtf_data.loc[:, ["_id", "COUNTRY", "DATE", type_n]]
     return dtf_data
 
@@ -79,6 +78,7 @@ def update_csse_mdb():
     update_objects = list()
     for j in range(dtf_data.shape[0]):
         dict_tmp = dtf_data.iloc[j, ].to_dict()
+        dict_tmp["DATE"] = int(dict_tmp["DATE"])
         dict_tmp["T"] = int(dict_tmp["T"])
         dict_tmp["R"] = int(dict_tmp["R"])
         dict_tmp["D"] = int(dict_tmp["D"])
