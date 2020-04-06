@@ -11,7 +11,7 @@ def forecast_logistic_country(country, today, n_forecast):
     dtf_data = DataFrame(
         collection.find({"COUNTRY": "italy", "DATE": {"$lte": today}})
     )
-    if dtf_data.shape[0] <= 3:
+    if dtf_data.shape[0] <= 4:
         return {"past_fit": [], "forecast": []}
     dtf_data = dtf_data.sort_values(["DATE"])
     model = ModelLogistic()
