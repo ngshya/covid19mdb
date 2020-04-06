@@ -73,7 +73,7 @@ def update_csse_mdb():
     client = MongoClient('mongodb://'+mdb_user+':'+mdb_password\
         +'@ds263018.mlab.com:63018/covid-19', retryWrites=False)
     db = client["covid-19"]
-    db.list_collection_names()
+    #db.list_collection_names()
     collection = db["csse"]
     update_objects = list()
     for j in range(dtf_data.shape[0]):
