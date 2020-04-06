@@ -14,16 +14,16 @@ class ModelLogistic:
 
     def fit(self, y):
         self.y = y
-        self.X = arange(len(self.y))
+        self.X = arange(1, len(self.y)+1)
         self.optimal_params, _ = curve_fit(
             f=self.__logistic, 
             xdata=self.X, 
             ydata=self.y, 
             maxfev=10000, 
-            p0=[max(self.y), 1, 1])
+            p0=[max(self.y)+1, 1, 1])
 
     def forecast(self, n_forecast):
-        self.array_steps_forecast = arange(len(self.y) + n_forecast)
+        self.array_steps_forecast = arange(1, len(self.y)+n_forecast+1)
         y = self.__logistic(
             L=self.optimal_params[0],
             k=self.optimal_params[1],
