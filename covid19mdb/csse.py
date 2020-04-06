@@ -39,6 +39,7 @@ def csse_data(url, type_n, dates=None):
     dtf_data = concat((dtf_data, dtf_world))
     dtf_data["_id"] = dtf_data["COUNTRY"] \
         + "_" + dtf_data["DATE"]
+    dtf_data["DATE"] = dtf_data["DATE"].astype(int)
     dtf_data= dtf_data.loc[:, ["_id", "COUNTRY", "DATE", type_n]]
     return dtf_data
 
