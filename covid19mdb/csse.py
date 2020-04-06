@@ -35,7 +35,7 @@ def csse_data(url, type_n, dates=None):
     dtf_world = dtf_data.groupby(["DATE"])\
         .agg({type_n: "sum"})\
         .reset_index(drop=False)
-    dtf_world["COUNTRY"] = "World"
+    dtf_world["COUNTRY"] = "world"
     dtf_data = concat((dtf_data, dtf_world))
     dtf_data["_id"] = dtf_data["COUNTRY"] \
         + "_" + dtf_data["DATE"]
