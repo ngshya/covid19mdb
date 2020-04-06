@@ -1,4 +1,5 @@
 from pandas import DataFrame
+from numpy import min, max
 from .mongo import get_collection
 from .logistic import ModelLogistic
 
@@ -11,11 +12,23 @@ def forecast_logistic_country(country, today, n_forecast):
     dtf_data = DataFrame(
         collection.find({"COUNTRY": "italy", "DATE": {"$lte": today}})
     )
-    if dtf_data.shape[0] <= 3:
-        return {"past_fit": [], "forecast": []}
+    min_T = min(dtf_data["T"])
+    max_T = max(dtf_data["T"])
+    if min_T == max_T:
+        return {
+            "past_fit": [min_T] * dtf_data.shape[0], 
+            "forecast": [min_T] * n_forecast
+        }
     dtf_data = dtf_data.sort_values(["DATE"])
     model = ModelLogistic()
-    model.fit(dtf_data["T"].values)
+    try:
+        model.fit(dtf_data["T"].values)
+    except Exception as e:
+        print(e)
+        return {
+            "past_fit": [min_T] * dtf_data.shape[0], 
+            "forecast": [max_T] * n_forecast
+        }
     dict_forecast = model.forecast(n_forecast=n_forecast)
     dict_forecast["past_fit"] = [int(_) for _ in dict_forecast["past_fit"]]
     dict_forecast["forecast"] = [int(_) for _ in dict_forecast["forecast"]]
